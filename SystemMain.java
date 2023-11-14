@@ -368,7 +368,137 @@ class InstapaySystem {
     }
 }
 
-public class BillMain {
+// Transfer Part
+class BankUser {
+    private String bankUserName;
+
+    public BankUser(String bankUserName) {
+        this.bankUserName = bankUserName;
+    }
+
+    public String getBankUserName() {
+        return bankUserName;
+    }
+}
+
+class Transfer {
+    private API api;
+
+    public Transfer(API api) {
+        this.api = api;
+    }
+
+    public boolean transferAmount(User sender, User receiver, double amount) {
+        if (api.verify(sender)) {
+            double senderBalance = api.getBalance();
+            if (senderBalance >= amount) {
+                // Perform the actual transfer logic
+                // ...
+
+                // Update balances, log transactions, etc.
+                // ...
+
+                return true; // Transfer successful
+            } else {
+                System.out.println("Insufficient balance for the transfer.");
+            }
+        } else {
+            System.out.println("Sender verification failed.");
+        }
+
+        return false; // Transfer failed
+    }
+}
+
+interface WalletUser {
+    boolean transfer(double amount, WalletUser receiver);
+}
+
+interface BankUserTransfer {
+    boolean transfer(double amount, BankUser receiver);
+}
+
+class TransferToInstapay implements BankUserTransfer, WalletUser {
+    @Override
+    public boolean transfer(double amount, BankUser receiver) {
+        // Implementation for transferring money from bank user to bank user
+        System.out.println("Transferring $" + amount + " from BankUser to BankUser");
+        return true; // Replace with actual implementation
+    }
+
+    @Override
+    public boolean transfer(double amount, WalletUser receiver) {
+        // Implementation for transferring money from bank user to wallet user
+        System.out.println("Transferring $" + amount + " from BankUser to WalletUser");
+        return true; // Replace with actual implementation
+    }
+}
+
+class TransferToWallet implements WalletUser {
+    @Override
+    public boolean transfer(double amount, WalletUser receiver) {
+        // Implementation for transferring money from wallet user to wallet user
+        System.out.println("Transferring $" + amount + " from WalletUser to WalletUser");
+        return true; // Replace with actual implementation
+    }
+}
+
+class TransferToBank implements BankUserTransfer {
+    @Override
+    public boolean transfer(double amount, BankUser receiver) {
+        // Implementation for transferring money from bank user to bank user
+        System.out.println("Transferring $" + amount + " from BankUser to BankUser");
+        return true; // Replace with actual implementation
+    }
+}
+
+interface API {
+    boolean verify(User user);
+
+    double getBalance();
+}
+
+class BankAPI implements API {
+    @Override
+    public boolean verify(User user) {
+        // Bank-specific verification logic
+        return true;
+    }
+
+    @Override
+    public double getBalance() {
+        // Bank-specific balance retrieval logic
+        return 1000.0; // Example balance
+    }
+}
+
+class WalletAPI implements API {
+    @Override
+    public boolean verify(User user) {
+        // Wallet-specific verification logic
+        return true;
+    }
+
+    @Override
+    public double getBalance() {
+        // Wallet-specific balance retrieval logic
+        return 500.0; // Example balance
+    }
+}
+
+class Banks extends WalletAPI {
+    // Additional functionality specific to Banks
+}
+
+class TeleCompanies extends WalletAPI {
+    // Additional functionality specific to TeleCompanies
+}
+
+class ElectroPaymentCompanies extends WalletAPI {
+    // Additional functionality specific to ElectroPaymentCompanies
+}
+
+public class SystemMain {
     public static void main(String[] args) {
         InstapaySystem System = new InstapaySystem();
         System.DisplayScreen();
