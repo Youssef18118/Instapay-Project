@@ -3,4 +3,8 @@ class WalletUser extends User {
         super(userName, password, mobileNo, balance, UserType.WALLET_USER);
         // Additional initialization for WalletUser if needed
     }
+    public WalletUser()
+    {
+
+    }
 }

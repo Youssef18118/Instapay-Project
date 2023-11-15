@@ -7,7 +7,7 @@ class TransferToBankStrategy implements TransferStrategy {
 
     @Override
     public boolean transfer(double amount, User sender, User receiver) {
-        if (bankAPI.verify(sender)) {
+        if (bankAPI.verify(receiver)) {
             double senderBalance = bankAPI.getBalance(sender);
             if (senderBalance >= amount && sender.getUserType() == UserType.BANK_USER) {
                 // Perform the actual transfer logic
@@ -20,7 +20,7 @@ class TransferToBankStrategy implements TransferStrategy {
                 System.out.println("Insufficient balance for the transfer or invalid user type.");
             }
         } else {
-            System.out.println("Sender verification failed.");
+            System.out.println("Receiver verification failed.");
         }
         return false;
     }

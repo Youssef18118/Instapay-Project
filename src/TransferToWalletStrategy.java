@@ -7,7 +7,7 @@ class TransferToWalletStrategy implements TransferStrategy {
 
     @Override
     public boolean transfer(double amount, User sender, User receiver) {
-        if (walletAPI.verify(sender) && sender.getUserType() == UserType.WALLET_USER) {
+        if (walletAPI.verify(receiver) && sender.getUserType() == UserType.WALLET_USER) {
             double senderBalance = walletAPI.getBalance(sender);
             if (senderBalance >= amount) {
                 // Perform the actual transfer logic
@@ -20,7 +20,7 @@ class TransferToWalletStrategy implements TransferStrategy {
                 System.out.println("Insufficient balance for the transfer.");
             }
         } else {
-            System.out.println("Sender verification failed or invalid user type.");
+            System.out.println("receiver verification failed or invalid user type.");
         }
         return false;
     }

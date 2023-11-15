@@ -1,4 +1,9 @@
+import java.util.Date;
+
 class SignUp {
+    private User user;
+    private BankUser bUser;
+    private WalletUser wUser = new WalletUser();
     private System system;
     private IOTP otpoperation;
     private API CheckApI;
@@ -27,6 +32,31 @@ class SignUp {
         return otpoperation;
     }
 
+    public User getInfoUser(String username, String password, String mobile, UserType type)
+    {
+        user.setUserName(username);
+        user.setPassword(password);
+        user.setMobileNo(mobile);
+        return user;
+    }
+    public BankUser getInfoUserBank(String username, String password, String mobile, int cvv, String cardNum, Date expDate)
+    {
+        bUser.setUserName(username);
+        bUser.setPassword(password);
+        bUser.setMobileNo(mobile);
+        bUser.setCvv(cvv);
+        bUser.setCardNo(cardNum);
+        bUser.setExpirationDate(expDate);
+        return bUser;
+
+    }
+    public WalletUser getInfoWallet(String username, String password, String mobile)
+    {
+        wUser.setUserName(username);
+        wUser.setPassword(password);
+        wUser.setMobileNo(mobile);
+        return wUser;
+    }
     public void makeSignup(User user) {
         // Perform API check
         API CheckApI = new API() {
@@ -65,7 +95,7 @@ class SignUp {
 
             @Override
             public boolean verifyOTP(String OTPEntered) {
-                return false;
+                return true;
             }
 
             @Override
