@@ -5,7 +5,9 @@ interface DB {
 
     boolean findUserName(String userName);
 
-    User findUser(String userName);
+    User findUser(User usr);
+
+    boolean findUserNameANDPassword(String userName, String password);
 
     boolean verifyUser(User user); // Add this method for user verification
 

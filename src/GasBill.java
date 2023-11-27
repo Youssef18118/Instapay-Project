@@ -2,7 +2,7 @@ class GasBill extends Bill {
     private int readNo;
 
     public GasBill(int billID, int electronicPaymentNo, double billExpenses, String companyName, int readNo) {
-        super(billID, electronicPaymentNo, billExpenses, companyName);
+        super(billID, electronicPaymentNo, billExpenses, companyName, BillType.GAS);
         this.readNo = readNo;
     }
 

@@ -2,7 +2,7 @@ class WaterBill extends Bill {
     private int consumption;
 
     public WaterBill(int billID, int electronicPaymentNo, double billExpenses, String companyName, int consumption) {
-        super(billID, electronicPaymentNo, billExpenses, companyName);
+        super(billID, electronicPaymentNo, billExpenses, companyName, BillType.WATER);
         this.consumption = consumption;
     }
 

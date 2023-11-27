@@ -3,13 +3,15 @@ abstract class Bill {
     private int electronicPaymentNo;
     private double billExpenses;
     private String companyName;
-    BillAPI billAPI;
+    private BillType billType;
+    private BillAPI billAPI;
 
-    public Bill(int billID, int electronicPaymentNo, double billExpenses, String companyName) {
+    public Bill(int billID, int electronicPaymentNo, double billExpenses, String companyName, BillType billType) {
         this.billID = billID;
         this.electronicPaymentNo = electronicPaymentNo;
         this.billExpenses = billExpenses;
         this.companyName = companyName;
+        this.billType = billType;
     }
 
     public abstract String displayBill();
@@ -54,5 +56,13 @@ abstract class Bill {
 
     public void setBillAPI(BillAPI billAPI) {
         this.billAPI = billAPI;
+    }
+
+    public BillType getBillType() {
+        return billType;
+    }
+
+    public void setBillType(BillType billType) {
+        this.billType = billType;
     }
 }

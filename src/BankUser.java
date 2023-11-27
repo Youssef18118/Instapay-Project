@@ -6,8 +6,12 @@ class BankUser extends User {
     private int cvv;
     private Date expirationDate;
 
+    public BankUser() {
+
+    }
+
     public BankUser(String userName, String password, String mobileNo, double balance,
-                    String bankUserName, String cardNo, int cvv, Date expirationDate) {
+            String bankUserName, String cardNo, int cvv, Date expirationDate) {
         super(userName, password, mobileNo, balance, UserType.BANK_USER);
         this.bankUserName = bankUserName;
         this.cardNo = cardNo;

@@ -1,11 +1,11 @@
+import java.util.Scanner;
 
 public class SignIn {
     private String Username;
     private String password;
-    private InstapaySystem system;
 
-    public void setSystem(InstapaySystem system) {
-        this.system = system;
+    public SignIn() {
+
     }
 
     public void setPassword(String password) {
@@ -16,10 +16,6 @@ public class SignIn {
         Username = Username;
     }
 
-    public InstapaySystem getSystem() {
-        return system;
-    }
-
     public String getPassword() {
         return password;
     }
@@ -27,17 +23,29 @@ public class SignIn {
     public String getUsername() {
         return Username;
     }
-    public boolean login(String Username, String Password) {
 
+    public User SignInPut() {
+        Scanner scanner = new Scanner(System.in);
 
-        if (system.db.findUserName(Username)) {
-            // Display success message
-            java.lang.System.out.println("Login successful!");
-            return true;
-        } else {
-            // Display failure message
-            System.out.println("Login failed. Invalid username or password.");
-            return false;
-        }
+        // try {
+        System.out.println("Enter UserName:");
+        Username = scanner.nextLine();
+
+        System.out.println("Enter password:");
+        password = scanner.nextLine();
+
+        User user = new User();
+        user.setUserName(Username);
+        user.setPassword(password);
+        return user;
+
+        // } catch (Exception e) {
+        // System.out.println("An error occurred: " + e.getMessage());
+        // return null;
+
+        // } finally {
+        // scanner.close();
+        // }
     }
+
 }

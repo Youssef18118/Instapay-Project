@@ -5,10 +5,10 @@ class User {
     private double balance;
     private UserType userType;
 
-    public User()
-    {
+    public User() {
 
     }
+
     public User(String userName, String password, String mobileNo, double balance, UserType userType) {
         this.userName = userName;
         this.password = password;
@@ -60,4 +60,5 @@ class User {
             System.out.println("Invalid balance. Balance cannot be negative.");
         }
     }
+
 }

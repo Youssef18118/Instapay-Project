@@ -1,6 +1,5 @@
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 class DbList implements DB {
     private List<User> users;
@@ -11,7 +10,12 @@ class DbList implements DB {
 
     @Override
     public void addUser(User user) {
-        users.add(user);
+
+        if (!findUserNameANDPassword(user.getUserName(), user.getPassword())) {
+            // If the username and password don't exist, add the user to the list
+            users.add(user);
+        }
+
     }
 
     @Override
@@ -22,38 +26,56 @@ class DbList implements DB {
     @Override
     public boolean findUserName(String userName) {
         for (User user : users) {
-//            if (Objects.equals(userName, user.getUserName())) {
+            if (user.getUserName().equals(userName)) {
                 return true;
-//            }
+            }
         }
         return false;
     }
 
     @Override
-    public User findUser(String userName) {
+    public boolean findUserNameANDPassword(String userName, String password) {
         for (User user : users) {
-//            if (Objects.equals(userName, user.getUserName())) {
+            if (user.getUserName().equals(userName) && user.getPassword().equals(password)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public User findUser(User usr) {
+        for (User user : users) {
+            if (user.equals(usr)) {
                 return user;
-//            }
+            }
         }
         return null;
     }
 
     @Override
     public boolean verifyUser(User user) {
+        // Assuming verification is successful if the user is present in the list
         return users.contains(user);
     }
 
     @Override
     public double getBalance(User user) {
-        // You need to implement this method based on your logic
-        // For now, it returns 0.0
-        return 0.0;
+        for (User u : users) {
+            if (u.equals(user)) {
+                return u.getBalance();
+            }
+        }
+        return 0.0; // Return 0 if user not found
     }
 
     @Override
     public void updateBalance(User user, double newBalance) {
-        // You need to implement this method based on your logic
-        // For now, it does nothing
+        for (User u : users) {
+            if (u.equals(user)) {
+                u.setBalance(newBalance);
+                break;
+            }
+        }
     }
 }

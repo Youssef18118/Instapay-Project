@@ -6,13 +6,13 @@ import java.util.Date;
 class InstapaySystem {
     private User user;
     private static Scanner scanner = new Scanner(System.in);
-    public DB db;
+    public DB db = new DbList();
     public API api;
-    private SignUp signup = new SignUp();
+    private SignUp signup = new SignUp(api);
 
-    private SignIn signin;
+    private SignIn signin = new SignIn();
 
-    public void DisplayWelcome(){
+    public void DisplayWelcome() {
         // display sign in and sign up
         System.out.println("1. Sign up");
         System.out.println("2. Sign in");
@@ -28,7 +28,16 @@ class InstapaySystem {
             switch (choice) {
                 case 1:
                     user = MakeSignup();
-                    signup.makeSignup(user);
+                    if (user.getUserType() == UserType.BANK_USER) {
+                        api = new BankAPI();
+                    } else {
+                        api = new WalletAPI();
+                    }
+                    if (signup.makeSignup(user)) {
+                        System.out.println("sign up done successfully");
+                        db.addUser(user);
+                    }
+
                     break;
                 case 2:
                     MakeSignin();
@@ -42,14 +51,65 @@ class InstapaySystem {
         } while (choice != 3);
     }
 
-    private boolean MakeSignin()
-    {
-        // to be implemented
+    public boolean login(String Username, String Password) {
+
+        if (db.findUserNameANDPassword(Username, Password)) {
+            // Display success message
+            return true;
+        } else {
+            // Display failure message
+            return false;
+        }
+    }
+
+    private boolean MakeSignin() {
+
+        User siginUser = signin.SignInPut();
+        if (siginUser == null) {
+            System.out.println("Login failed. Invalid username or password.");
+            return false;
+        }
+
+        // System.out.println("Username: " + siginUser.getUserName());
+        // System.out.println("Password: " + siginUser.getPassword());
+
+        if (!login(siginUser.getUserName(), siginUser.getPassword())) {
+            System.out.println("Login failed. Invalid username or password.");
+            return false;
+        } else {
+            System.out.println("Login successful!");
+        }
+
+        // move to other menue
+
+        int option;
+
+        do {
+            displayMenu();
+            option = getUserChoice();
+
+            switch (option) {
+                case 1:
+                    payBillOption();
+                    break;
+                case 2:
+                    transferMoneyOption();
+                    break;
+                case 3:
+                    System.out.println("Balance is " + user.getBalance());
+                    break;
+                case 4:
+                    System.out.println("Exiting Instapay System. Goodbye!");
+                    break;
+                default:
+                    System.out.println("Invalid Input!");
+            }
+        } while (option != 4);
+
         return true;
     }
 
-    private User MakeSignup()
-    {
+    private User MakeSignup() {
         // to be implemented
         System.out.println("Enter Type of account (ex: wallet, bank)");
         System.out.println("1.Bank Account");
@@ -57,7 +117,7 @@ class InstapaySystem {
         int choice = scanner.nextInt();
         scanner.nextLine();
 
-        if (choice == 1)
+        if (choice == 1) // Bank Account
         {
             System.out.print("Enter username: ");
             String username = scanner.nextLine();
@@ -79,16 +139,16 @@ class InstapaySystem {
             String expDateString = scanner.nextLine();
             Date expDate = null;
 
-
             SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
             try {
                 expDate = dateFormat.parse(expDateString);
             } catch (ParseException e) {
                 System.out.println("Invalid date format. Please enter the date in MM/dd/yyyy format.");
             }
-
+            api = new BankAPI();
             user = signup.getInfoUserBank(username, password, mobile, cvv, cardNum, expDate);
-        } else if (choice == 2) {
+            user.setUserType(UserType.BANK_USER);
+        } else if (choice == 2) { // Wallet Account
             System.out.print("Enter username: ");
             String username = scanner.nextLine();
 
@@ -98,11 +158,11 @@ class InstapaySystem {
             System.out.print("Enter mobile number: ");
             String mobile = scanner.nextLine();
 
+            api = new WalletAPI();
             user = signup.getInfoWallet(username, password, mobile);
+            user.setUserType(UserType.WALLET_USER);
 
-
-        }
-        else {
+        } else {
             System.out.println("Wrong input");
             return null;
         }
@@ -116,7 +176,8 @@ class InstapaySystem {
         System.out.println("Instapay System Menu:");
         System.out.println("1. Pay Bill");
         System.out.println("2. Transfer");
-        System.out.println("3. Exit");
+        System.out.println("3. View Balance");
+        System.out.println("4. Exit");
     }
 
     private int getUserChoice() {
@@ -149,12 +210,47 @@ class InstapaySystem {
         // Create Bill
         Bill bill = BillFactory.createBill(billType, companyName, electronicPaymentNo);
 
-        // Pay Bill
-        if (bill != null) {
-            // Create a user
-            User user = new User("", "", "", 00.0, UserType.BANK_USER);
-            user.setBalance(1000); // Set initial balance
-            PayBill.payBill(user, bill);
+        if (bill == null) {
+            System.out.println("Bill creation failed. Returning to the menu.\n");
+            return;
+        }
+
+        // Display bill details
+        System.out.println("Bill Details:");
+        System.out.println("Type: " + bill.getBillType());
+        System.out.println("Company: " + bill.getCompanyName());
+        System.out.println("Electronic Payment Number: " + bill.getElectronicPaymentNo());
+        System.out.println("Expenses: " + bill.getBillExpenses());
+
+        // Ask user if they want to proceed with the payment
+        System.out.println("Do you want to pay this bill? (Y/N):");
+        String choice = scanner.next().toUpperCase();
+
+        if ("Y".equals(choice)) {
+
+            System.out.println("Balance of User (check)" + user.getBalance());
+
+            // Pay Bill
+            if (PayBill.payBill(user, bill)) {
+
+                if (user.getUserType() == UserType.BANK_USER) {
+                    api = new BankAPI();
+
+                } else if (user.getUserType() == UserType.WALLET_USER) {
+                    api = new WalletAPI();
+                }
+
+                api.updateBalance(user, user.getBalance());
+                // System.out.println("new Balance: " + user.getBalance());
+
+                System.out.println("Bill paid successfully \n");
+            } else {
+                System.out.println("Failed to pay the bill. Insufficient balance.\n");
+            }
+        } else if ("N".equals(choice)) {
+            System.out.println("Payment canceled. Returning to the menu.\n");
+        } else {
+            System.out.println("Invalid input. Returning to the menu.\n");
         }
     }
 
@@ -195,6 +291,7 @@ class InstapaySystem {
 
         if (senderBalance < amount) {
             System.out.println("Insufficient balance for the transfer. Returning to the menu.");
+            System.out.println(senderBalance);
             return;
         }
 
@@ -209,7 +306,6 @@ class InstapaySystem {
                 String receiverMobileNo = scanner.next();
                 scanner.nextLine();
 
-
                 WalletUser receiver = createWalletUser("", "", receiverMobileNo);
                 transfer.performTransfer(amount, user, receiver);
 
@@ -217,12 +313,14 @@ class InstapaySystem {
                 System.out.println("Enter receiver card number for Bank transfer: ");
                 String receiverCardNo = scanner.next();
                 scanner.nextLine();
+
                 BankUser receiver = createBankUser("", "", receiverCardNo);
                 transfer.performTransfer(amount, user, receiver);
             } else if (receiverType == 1) {
                 System.out.println("Enter receiver username for Instapay transfer: ");
                 String receiverUsername = scanner.next();
                 scanner.nextLine();
+
                 User receiver = createUser(receiverUsername, "");
                 transfer.performTransfer(amount, user, receiver);
             } else {
@@ -231,6 +329,7 @@ class InstapaySystem {
             }
         }
     }
+
     private TransferStrategy createTransferStrategy(int receiverType, User sender) {
         TransferStrategy transferStrategy = null;
 
@@ -255,6 +354,7 @@ class InstapaySystem {
 
         return transferStrategy;
     }
+
     private User createUser(String username, String password) {
         // creates a user object to search for without adding the user in the database
         return new User(username, password, "", 0.0, UserType.INSTAPAY_USER);
@@ -271,5 +371,3 @@ class InstapaySystem {
     }
 
 }
-
-

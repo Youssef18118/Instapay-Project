@@ -3,7 +3,7 @@ public interface IOTP {
     void sendOTP(String mobileNo);
 
     // Method to verify the entered OTP
-    boolean verifyOTP(String OTPEntered);
+    boolean verifyOTP(int OTPEntered);
 
     String SendOTP();
 }

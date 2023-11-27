@@ -1,10 +1,9 @@
 public class OTP implements IOTP {
     private String mobileNo;
-    private int duration;
+    private int duration = 10;
 
-    public OTP(String mobileNo, int duration) {
+    public OTP(String mobileNo) {
         this.mobileNo = mobileNo;
-        this.duration = duration;
     }
 
     public String getMobileNo() {
@@ -23,18 +22,23 @@ public class OTP implements IOTP {
         this.duration = duration;
     }
 
-
     @Override
     public void sendOTP(String mobileNo) {
         System.out.println("OTP sent to " + mobileNo);
     }
 
-
     @Override
-    public boolean verifyOTP(String OTPEntered) {
-
-        String expectedOTP = "123456";
-        return OTPEntered.equals(expectedOTP);
+    public boolean verifyOTP(int OTPEntered) {
+        if (duration == 0) {
+            System.out.println("Duration is Consumed for OTP verfication. Another OTP sent to Your phone check");
+            duration = 10;
+            int expectedOTP = 123456;
+            return (OTPEntered == expectedOTP);
+        } else {
+            int expectedOTP = 12345;
+            duration--;
+            return (OTPEntered == expectedOTP);
+        }
     }
 
     @Override

@@ -8,10 +8,19 @@ class TransferToInstapayStrategy implements TransferStrategy {
 
     @Override
     public boolean transfer(double amount, User sender, User receiver) {
-        // Check if the receiver is a valid Instapay account in the DB
-        if (receiver instanceof User && db.findUserName(receiver.getUserName())) {
-            // Check if the sender is valid and has sufficient balance
-            if (db.findUserName(sender.getUserName()) && (db.findUser(sender.getUserName()).getBalance() >= amount)) {
+
+        // System.out.println("Receiver type: " + receiver.getUserType());
+        // System.out.println("Receiver username exists: " +
+        // db.findUserName(receiver.getUserName()));
+        // userName = userName.trim().toLowerCase(); before passing to findUserName but
+        // it returns false
+
+        if ((receiver.getUserType() == UserType.INSTAPAY_USER)
+                && db.findUserName(receiver.getUserName())) {
+            if (db.findUserName(sender.getUserName()) && (db.findUser(sender).getBalance() >= amount)) { // small
+                                                                                                         // problem with
+                                                                                                         // findUser
+
                 // Perform the actual transfer logic
                 db.updateBalance(sender, db.getBalance(sender) - amount);
                 db.updateBalance(receiver, db.getBalance(receiver) + amount);

@@ -11,8 +11,6 @@ class PayBill {
         }
         user.setBalance(balance - billExpenses);
 
-        // Your payment logic here
-        System.out.println("Bill paid successfully \n");
         return true;
     }
 }

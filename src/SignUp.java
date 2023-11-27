@@ -1,23 +1,31 @@
 import java.util.Date;
+import java.util.Scanner;
 
 class SignUp {
     private User user;
-    private BankUser bUser;
+    private BankUser bUser = new BankUser();
     private WalletUser wUser = new WalletUser();
-    private System system;
+    // private InstapaySystem syst;
     private IOTP otpoperation;
     private API CheckApI;
+    Scanner scanner;
 
-    public void setSystem(System system) {
-        this.system = system;
+    // maybe wrong
+    public SignUp(API CheckApI) {
+        this.CheckApI = CheckApI;
+        this.scanner = new Scanner(System.in); // Initialize the scanner
     }
 
-    public System getSystem() {
-        return system;
-    }
+    // public void setSystem(InstapaySystem system) {
+    // this.syst = system;
+    // }
+
+    // public InstapaySystem getSystem() {
+    // return syst;
+    // }
 
     public void setCheckApI(API checkApI) {
-        CheckApI = checkApI;
+        this.CheckApI = checkApI;
     }
 
     public API getCheckApI() {
@@ -32,15 +40,15 @@ class SignUp {
         return otpoperation;
     }
 
-    public User getInfoUser(String username, String password, String mobile, UserType type)
-    {
+    public User getInfoUser(String username, String password, String mobile, UserType type) {
         user.setUserName(username);
         user.setPassword(password);
         user.setMobileNo(mobile);
         return user;
     }
-    public BankUser getInfoUserBank(String username, String password, String mobile, int cvv, String cardNum, Date expDate)
-    {
+
+    public BankUser getInfoUserBank(String username, String password, String mobile, int cvv, String cardNum,
+            Date expDate) {
         bUser.setUserName(username);
         bUser.setPassword(password);
         bUser.setMobileNo(mobile);
@@ -50,71 +58,64 @@ class SignUp {
         return bUser;
 
     }
-    public WalletUser getInfoWallet(String username, String password, String mobile)
-    {
+
+    public WalletUser getInfoWallet(String username, String password, String mobile) {
         wUser.setUserName(username);
         wUser.setPassword(password);
         wUser.setMobileNo(mobile);
         return wUser;
     }
-    public void makeSignup(User user) {
+
+    public boolean makeSignup(User user) {
+        // perform PasswordCheck
+        while (!isPasswordStrong(user.getPassword())) {
+            System.out.println(
+                    "Password is not strong enough!!! Please enter a password with at least 8 characters, 1 special character, and 1 uppercase letter.");
+            System.out.println("Please enter the password again:");
+            String pass = scanner.nextLine();
+            // Validate the password and set it in the user object
+            if (isPasswordStrong(pass)) {
+                user.setPassword(pass);
+            } else {
+                System.out.println("Invalid password format. Try again.");
+            }
+        }
+
+        if (user.getUserType() == UserType.BANK_USER) {
+            CheckApI = new BankAPI();
+        } else {
+            CheckApI = new WalletAPI();
+        }
         // Perform API check
-        API CheckApI = new API() {
-            @Override
-            public boolean verify(User user) {
-                return false;
-            }
-
-            @Override
-            public double getBalance(User user) {
-                return 0;
-            }
-
-            @Override
-            public void updateBalance(User user, double newBalance) {
-
-            }
-
-            @Override
-            public UserType getSupportedUserType() {
-                return null;
-            }
-
-            public double getBalance() {
-                return 0;
-            }
-        };
         boolean isAPICheckPassed = CheckApI.verify(user);
+        double balance = CheckApI.getBalance(user);
+        user.setBalance(balance);
 
-        // Generate OTP
-        IOTP otpoperation = new IOTP() {
-            @Override
-            public void sendOTP(String mobileNo) {
+        if (!isAPICheckPassed) {
+            System.out.println("User Not Found by API");
+            return false;
+        }
 
-            }
-
-            @Override
-            public boolean verifyOTP(String OTPEntered) {
-                return true;
-            }
-
-            @Override
-            public String SendOTP() {
-                return null;
-            }
-        };
-        String otpCode = otpoperation.SendOTP();
+        otpoperation = new OTP(user.getMobileNo());
+        otpoperation.SendOTP();
+        System.out.println("OTP Sent successfully");
+        System.out.println("pls Enter OTP send to your phone");
+        int otpCode = scanner.nextInt();
+        scanner.nextLine();
 
         // Verify OTP
         boolean isOTPVerified = otpoperation.verifyOTP(otpCode);
 
-        if (isAPICheckPassed && isOTPVerified) {
-            //call function adduser();
-            System.out.println("User signed up successfully!");
-        } else {
-            System.out.println("User signup failed. Please check API, OTP, and password.");
+        if (!isOTPVerified) {
+            // call function adduser();
+            System.out.println("Not valid OTP !!!");
+            return false;
         }
+
+        return true;
+
     }
+
     public boolean isPasswordStrong(String password) {
         return password != null && password.length() >= 8 &&
                 password.matches(".*[A-Z].*") && password.matches(".*[!@#$%^&*()-_=+\\|[{]};:'\",<.>/?].*");
