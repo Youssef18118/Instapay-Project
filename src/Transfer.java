@@ -5,7 +5,7 @@ class Transfer {
         this.transferStrategy = transferStrategy;
     }
 
-    public boolean performTransfer(double amount, User sender, User receiver) {
-        return transferStrategy.transfer(amount, sender, receiver);
+    public boolean performTransfer(double amount, double senderBalance, User sender, User receiver) {
+        return transferStrategy.transfer(amount, senderBalance, sender, receiver);
     }
 }

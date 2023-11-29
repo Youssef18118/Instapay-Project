@@ -1,4 +1,4 @@
-class User {
+public abstract class User {
     private String userName;
     private String password;
     private String mobileNo;
@@ -61,4 +61,7 @@ class User {
         }
     }
 
+    public void releaseUserType() {
+        this.userType = null;
+    }
 }

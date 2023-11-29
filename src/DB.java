@@ -14,4 +14,12 @@ interface DB {
     double getBalance(User user); // Add this method to get user balance
 
     void updateBalance(User user, double newBalance); // Add this method to update user balance
+
+    public boolean findUserType(UserType type);
+
+    public UserType findUserType(String userName);
+
+    public User getUser(String userName, String password);
+
+    public User findUserByphone(String phoneNum);
 }

@@ -5,6 +5,6 @@ class WaterCompany implements Company {
         // In a real-world scenario, you would fetch actual data from the Water Company
         // API
         // For demonstration purposes, we use dummy values
-        return 600;
+        return 100;
     }
 }

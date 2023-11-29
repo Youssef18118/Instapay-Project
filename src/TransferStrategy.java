@@ -1,3 +1,3 @@
 interface TransferStrategy {
-    boolean transfer(double amount, User sender, User receiver);
+    boolean transfer(double amount, double senderBalance, User sender, User receiver);
 }

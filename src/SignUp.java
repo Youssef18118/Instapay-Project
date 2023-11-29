@@ -16,14 +16,6 @@ class SignUp {
         this.scanner = new Scanner(System.in); // Initialize the scanner
     }
 
-    // public void setSystem(InstapaySystem system) {
-    // this.syst = system;
-    // }
-
-    // public InstapaySystem getSystem() {
-    // return syst;
-    // }
-
     public void setCheckApI(API checkApI) {
         this.CheckApI = checkApI;
     }
