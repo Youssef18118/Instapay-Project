@@ -1,7 +1,7 @@
 class WalletAPI implements API {
         @Override
         public boolean verify(User user) {
-                System.out.println("Inside WalletAPI " + user.getUserType());
+                // System.out.println("Inside WalletAPI " + user.getUserType());
                 if (user.getUserType() == UserType.WALLET_USER) {
                         // WalletUser walletUser = (WalletUser) user;
                         return WalletCompanyDatabase.verifyWalletUser(user.getMobileNo());

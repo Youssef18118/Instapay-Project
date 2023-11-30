@@ -3,33 +3,21 @@ import java.util.List;
 
 class DbList implements DB {
     private List<User> users;
+    private List<BankUser> Bankusers;
 
     public DbList() {
         this.users = new ArrayList<>();
+        this.Bankusers = new ArrayList<>();
     }
 
     @Override
     public void addUser(User user) {
-        // return error while sign up as Bank User
-        // if (!findUserNameANDPassword(user.getUserName(), user.getPassword())) {
-        // If the username and password don't exist, add the user to the list
-        // users.add(user);
-        // }
-
-        // Ensure both username and password are not null before adding the user to the
-        // list
-        // if (user.getUserName() != null && user.getPassword() != null
-        // && !findUserNameANDPassword(user.getUserName(), user.getPassword())) {
-        // // If the username and password don't exist, add the user to the list
-        // users.add(user);
-        // }
-
-        // if (user == null) {
-        // System.out.println("Nulllllll");
-        // }
-
         users.add(user);
+    }
 
+    @Override
+    public void addBankUser(BankUser user) {
+        Bankusers.add(user);
     }
 
     @Override
@@ -38,9 +26,14 @@ class DbList implements DB {
     }
 
     @Override
+    public void removeBankUser(BankUser user) {
+        Bankusers.remove(user);
+    }
+
+    @Override
     public boolean findUserName(String userName) {
         for (User user : users) {
-            System.out.println("Inside FindUserName " + user.getUserName());
+            // System.out.println("Inside FindUserName " + user.getUserName());
             if (user.getUserName().equals(userName)) {
                 return true;
             }
@@ -48,14 +41,13 @@ class DbList implements DB {
         return false;
     }
 
-    // this returns false all time
     @Override
     public boolean findUserNameANDPassword(String userName, String password) {
         for (User user : users) {
             String storedUserName = user.getUserName();
             String storedPassword = user.getPassword();
 
-            System.out.println(user);
+            // System.out.println(user);
 
             if (storedUserName != null && storedPassword != null &&
                     storedUserName.equals(userName) && storedPassword.equals(password)) {
@@ -64,7 +56,6 @@ class DbList implements DB {
         }
         return false;
 
-        // return true;
     }
 
     @Override
@@ -73,7 +64,7 @@ class DbList implements DB {
             String storedUserName = user.getUserName();
             String storedPassword = user.getPassword();
 
-            System.out.println(user);
+            // System.out.println(user);
 
             if (storedUserName != null && storedPassword != null &&
                     storedUserName.equals(userName) && storedPassword.equals(password)) {
@@ -82,7 +73,6 @@ class DbList implements DB {
         }
         return null;
 
-        // return true;
     }
 
     @Override
@@ -97,7 +87,6 @@ class DbList implements DB {
 
     @Override
     public boolean verifyUser(User user) {
-        // Assuming verification is successful if the user is present in the list
         return users.contains(user);
     }
 
@@ -124,7 +113,7 @@ class DbList implements DB {
     @Override
     public boolean findUserType(UserType type) {
         for (User user : users) {
-            System.out.println(user.getUserType());
+            // System.out.println(user.getUserType());
             if (user.getUserType().equals(type)) {
                 return true;
             }
@@ -135,7 +124,7 @@ class DbList implements DB {
     @Override
     public UserType findUserType(String userName) {
         for (User user : users) {
-            System.out.println("Inside FindUserType " + user.getUserType());
+            // System.out.println("Inside FindUserType " + user.getUserType());
             if (user.getUserName().equals(userName)) {
                 return user.getUserType();
             }
@@ -146,8 +135,19 @@ class DbList implements DB {
     @Override
     public User findUserByphone(String phoneNum) {
         for (User user : users) {
-            System.out.println("Inside findUserByphone " + user.getUserType());
+            // System.out.println("Inside findUserByphone " + user.getUserType());
             if (user.getMobileNo().equals(phoneNum)) {
+                return user;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public BankUser findCardNo(String Cardno) {
+        for (BankUser user : Bankusers) {
+            // System.out.println(user.getCardNo());
+            if (user.getCardNo().equals(Cardno)) {
                 return user;
             }
         }

@@ -6,11 +6,11 @@ import java.util.Date;
 class InstapaySystem {
     private User user;
     private User userdb;
+    private BankUser Buser;
     private static Scanner scanner = new Scanner(System.in);
     public DB db = new DbList();
     public API api;
     private SignUp signup = new SignUp(api);
-    private SignIn signin = new SignIn();
     private static TransferFactory tfactory;
 
     public void DisplayWelcome() {
@@ -38,28 +38,15 @@ class InstapaySystem {
                         api = new WalletAPI();
                     }
                     if (signup.makeSignup(user)) {
-                        System.out.println("sign up done successfully");
-                        System.out.println(user.getUserName() + "   " + user.getPassword());
+                        System.out.println("sign up done successfully" + '\n');
+                        // System.out.println(user.getUserName() + " " + user.getPassword());
 
-                        if (user.getUserType() == UserType.BANK_USER) {
-                            userdb = new BankUser();
-                        } else if (user.getUserType() == UserType.WALLET_USER) {
-                            userdb = new WalletUser();
-                        }
-
-                        UserType type = user.getUserType();
-
-                        userdb.setUserName(user.getUserName());
-                        userdb.setPassword(user.getPassword());
-                        userdb.setBalance(user.getBalance());
-                        userdb.setUserType(type);
-                        userdb.setMobileNo(user.getMobileNo());
-
-                        System.out.println("before db " + userdb.getUserType());
+                        userdb = user.CopyUser(userdb);
+                        // System.out.println("before db " + userdb.getUserType());
                         db.addUser(userdb);
+                        db.addBankUser(Buser);
 
-                        System.out.println(db.findUserType(type));
-                        // user.releaseUserType(); // to remove user Type
+                        // System.out.println(db.findUserType(userdb.getUserType()));
                     }
 
                     break;
@@ -79,8 +66,6 @@ class InstapaySystem {
     public boolean login(String Username, String Password) {
 
         if (db.findUserNameANDPassword(Username, Password)) {
-            // setUserType(db.findUser(user).getUserType());
-
             // db.findUser(user) return
             // null but should return user
             // this line is needed in transfer
@@ -125,8 +110,8 @@ class InstapaySystem {
             System.out.println("Login failed. Invalid username or password.");
             return false;
         } else {
-            user.setUserType(db.findUserType(user.getUserName())); // addeded
-            System.out.println("Login successful!");
+            user.setUserType(db.findUserType(user.getUserName()));
+            System.out.println("Login successful!" + '\n');
         }
 
         // move to other menue
@@ -145,7 +130,7 @@ class InstapaySystem {
                     transferMoneyOption();
                     break;
                 case 3:
-                    System.out.println("Balance is " + user.getBalance()); // user.getBalance()
+                    System.out.println("Balance is " + user.getBalance());
                     break;
                 case 4:
                     System.out.println("Exiting Instapay System. Goodbye!");
@@ -159,7 +144,6 @@ class InstapaySystem {
     }
 
     private User MakeSignup() {
-        // to be implemented
         System.out.println("Enter Type of account (ex: wallet, bank)");
         System.out.println("1.Bank Account");
         System.out.println("2.Wallet Account");
@@ -196,10 +180,10 @@ class InstapaySystem {
             }
             api = new BankAPI();
             user = signup.getInfoUserBank(username, password, mobile, cvv, cardNum, expDate);
+            Buser = signup.getInfoUserBank(username, password, mobile, cvv, cardNum, expDate);
             if (user != null) {
                 user.setUserType(UserType.BANK_USER);
             }
-
         } else if (choice == 2) { // Wallet Account
             System.out.print("Enter username: ");
             String username = scanner.nextLine();
@@ -222,9 +206,9 @@ class InstapaySystem {
             return null;
         }
 
-        if (user.getUserType() == null) {
-            System.out.println("NULLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
-        }
+        // if (user.getUserType() == null) {
+        // System.out.println("NULLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLL");
+        // }
 
         return user;
 
@@ -388,7 +372,7 @@ class InstapaySystem {
                 }
 
             } else if (receiverType == 2) {
-                System.out.println("User Typeeeeee is " + user.getUserType());
+                // System.out.println("User Typeeeeee is " + user.getUserType());
 
                 if (user.getUserType() != UserType.BANK_USER) {
                     System.out.println("You should be a BankUser to transfer to BankUser!!");
@@ -401,6 +385,13 @@ class InstapaySystem {
 
                 BankUser receiver = createBankUser(receiverCardNo);
                 transfer.performTransfer(amount, senderBalance, user, receiver);
+
+                // Update Balance of BankUser as a reciever
+                if (db.findCardNo(receiverCardNo) != null) {
+                    db.updateBalance(db.findCardNo(receiverCardNo),
+                            db.getBalance(db.findCardNo(receiverCardNo)) + amount);
+                }
+
             } else if (receiverType == 1) {
                 System.out.println("Enter receiver username for Instapay transfer: ");
                 String receiverUsername = scanner.next();
@@ -415,8 +406,9 @@ class InstapaySystem {
                 }
 
                 transfer.performTransfer(amount, senderBalance, user, receiver);
+                // Update Balance of User as a reciever
                 db.updateBalance(receiver, db.getBalance(receiver) + amount);
-                System.out.println("balance of reciver" + db.getBalance(receiver));
+                // System.out.println("balance of reciver" + db.getBalance(receiver));
 
             } else {
                 // For Instapay and Bank transfers, receiver is not needed in this context
@@ -446,5 +438,4 @@ class InstapaySystem {
         // creates a user object to search for without adding the user in the database
         return new WalletUser("", "", MobileNo, 0.0);
     }
-
 }

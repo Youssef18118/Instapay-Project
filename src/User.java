@@ -61,7 +61,22 @@ public abstract class User {
         }
     }
 
-    public void releaseUserType() {
-        this.userType = null;
+    public User CopyUser(User user) {
+        if (this.getUserType() == UserType.BANK_USER) {
+            user = new BankUser();
+        } else if (this.getUserType() == UserType.WALLET_USER) {
+            user = new WalletUser();
+        }
+
+        UserType type = this.getUserType();
+
+        user.setUserName(this.getUserName());
+        user.setPassword(this.getPassword());
+        user.setBalance(this.getBalance());
+        user.setUserType(type);
+        user.setMobileNo(this.getMobileNo());
+
+        return user;
     }
+
 }

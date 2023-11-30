@@ -1,7 +1,7 @@
 class BankAPI implements API {
     @Override
     public boolean verify(User user) {
-        System.out.println("Inside BankAPI " + user.getUserType());
+        // System.out.println("Inside BankAPI " + user.getUserType());
         if (user.getUserType() == UserType.BANK_USER) {
             BankUser bankUser = (BankUser) user;
             return BankDatabase.verifyBankUser(bankUser.getCardNo());

@@ -1,7 +1,11 @@
 interface DB {
     void addUser(User user);
 
+    void addBankUser(BankUser user);
+
     void removeUser(User user);
+
+    void removeBankUser(BankUser user);
 
     boolean findUserName(String userName);
 
@@ -22,4 +26,6 @@ interface DB {
     public User getUser(String userName, String password);
 
     public User findUserByphone(String phoneNum);
+
+    public BankUser findCardNo(String Cardno);
 }

@@ -24,28 +24,4 @@ public class SignIn {
         return Username;
     }
 
-    // public User SignInPut() {
-    // Scanner scanner = new Scanner(System.in);
-
-    // // try {
-    // System.out.println("Enter UserName:");
-    // Username = scanner.nextLine();
-
-    // System.out.println("Enter password:");
-    // password = scanner.nextLine();
-
-    // User user = db;
-    // user.setUserName(Username);
-    // user.setPassword(password);
-    // return user;
-
-    // // } catch (Exception e) {
-    // // System.out.println("An error occurred: " + e.getMessage());
-    // // return null;
-
-    // // } finally {
-    // // scanner.close();
-    // // }
-    // }
-
 }

@@ -2,7 +2,6 @@ import java.util.Date;
 import java.util.Scanner;
 
 class SignUp {
-    private User user;
     private BankUser bUser = new BankUser();
     private WalletUser wUser = new WalletUser();
     // private InstapaySystem syst;
@@ -30,13 +29,6 @@ class SignUp {
 
     public IOTP getOtpoperation() {
         return otpoperation;
-    }
-
-    public User getInfoUser(String username, String password, String mobile, UserType type) {
-        user.setUserName(username);
-        user.setPassword(password);
-        user.setMobileNo(mobile);
-        return user;
     }
 
     public BankUser getInfoUserBank(String username, String password, String mobile, int cvv, String cardNum,
